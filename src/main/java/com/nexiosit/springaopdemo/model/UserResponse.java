@@ -23,4 +23,9 @@ public class UserResponse {
     public String getLastName() {
         return lastName;
     }
+
+    @Override
+    public String toString() {
+        return String.format("UserResponse{id=%d, firstName='%s', lastName='%s'}", id, firstName, lastName);
+    }
 }

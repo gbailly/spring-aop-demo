@@ -59,7 +59,9 @@ public class UsersControllerIntegrationTest {
                 ListAppender.events.stream().map(ILoggingEvent::getMessage).collect(Collectors.toList()),
                 equalTo(Arrays.asList(
                         "About to call method UsersController.getUser",
-                        "Inside method UsersController.getUser")));
+                        "Inside method UsersController.getUser",
+                        "Returned from method com.nexiosit.springaopdemo.controller.UsersController.getUser"
+                                + " with UserResponse{id=123, firstName='Fred', lastName='Flintstone'}")));
     }
 
     @Test
@@ -78,6 +80,9 @@ public class UsersControllerIntegrationTest {
 
         assertThat(
                 ListAppender.events.stream().map(ILoggingEvent::getMessage).collect(Collectors.toList()),
-                equalTo(Arrays.asList("Inside method UsersController.createUser")));
+                equalTo(Arrays.asList(
+                        "Inside method UsersController.createUser",
+                        "Returned from method com.nexiosit.springaopdemo.controller.UsersController.createUser"
+                                + " with UserResponse{id=456, firstName='Wilma', lastName='Flintstone'}")));
     }
 }
