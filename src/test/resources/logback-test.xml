@@ -1,0 +1,6 @@
+<configuration>
+    <appender name="list" class="com.nexiosit.springaopdemo.log.ListAppender"/>
+    <root level="info">
+        <appender-ref ref="list"/>
+    </root>
+</configuration>

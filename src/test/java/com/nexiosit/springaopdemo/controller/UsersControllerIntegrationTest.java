@@ -1,7 +1,12 @@
 package com.nexiosit.springaopdemo.controller;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,8 +20,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.nexiosit.springaopdemo.SpringAopDemoApplication;
+import com.nexiosit.springaopdemo.log.ListAppender;
 import com.nexiosit.springaopdemo.model.UserRequest;
 
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import io.restassured.RestAssured;
 
 @ExtendWith(SpringExtension.class)
@@ -25,7 +32,7 @@ import io.restassured.RestAssured;
         properties = "server.port",
         classes = SpringAopDemoApplication.class)
 @ActiveProfiles("test")
-class UsersControllerIntegrationTest {
+public class UsersControllerIntegrationTest {
 
     @LocalServerPort
     private int port;
@@ -33,6 +40,7 @@ class UsersControllerIntegrationTest {
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
+        ListAppender.events.clear();
     }
 
     @Test
@@ -46,6 +54,12 @@ class UsersControllerIntegrationTest {
                 .then()
                 .statusCode(HttpStatus.OK.value())
                 .body(sameJSONAs("{\"id\":123,\"firstName\":\"Fred\",\"lastName\":\"Flintstone\"}"));
+
+        assertThat(
+                ListAppender.events.stream().map(ILoggingEvent::getMessage).collect(Collectors.toList()),
+                equalTo(Arrays.asList(
+                        "About to call method UsersController.getUser",
+                        "Inside method UsersController.getUser")));
     }
 
     @Test
@@ -61,5 +75,9 @@ class UsersControllerIntegrationTest {
                 .then()
                 .statusCode(HttpStatus.OK.value())
                 .body(sameJSONAs("{\"id\":456,\"firstName\":\"Wilma\",\"lastName\":\"Flintstone\"}"));
+
+        assertThat(
+                ListAppender.events.stream().map(ILoggingEvent::getMessage).collect(Collectors.toList()),
+                equalTo(Arrays.asList("Inside method UsersController.createUser")));
     }
 }
